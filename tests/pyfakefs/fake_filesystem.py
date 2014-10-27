@@ -1773,6 +1773,9 @@ class FakeOsModule(object):
                       'No such file or directory in fake filesystem',
                       path)
       raise
+    for arg in uid, gid:
+      if not isinstance(arg, (int, long)):
+        raise TypeError("an integer is required")
     if uid != -1:
       file_object.st_uid = uid
     if gid != -1:
