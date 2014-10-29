@@ -79,3 +79,29 @@ class TestFileState(unittest.TestCase):
         run_filestate_chown(user2, group1, user2, group2)
         # change both user and group
         run_filestate_chown(user2, group2, user1, group1)
+
+    def testChmod(self, mock_grp, mock_pwd, mock_os):
+        # Chmod should only be called if the mode will actually change.
+
+        fn = "/path/to/test/file"
+        call_list = []
+
+        def run_filestate_chmod(mode, add_perms, remove_perms, ignore_perms, 
+                expected_mode):
+            stat = mock_os.stat.return_value
+            stat.st_mode = mode
+            fs = src.filestate.FileState(add_perms=add_perms,
+                remove_perms=remove_perms, ignore_perms=ignore_perms)
+            fs.achieveState(fn)
+            if mode != expected_mode:
+                call_list.append(mock.call.os.chmod(fn, expected_mode))
+            self.assertEqual(mock_os.chmod.mock_calls, call_list)
+
+        run_filestate_chmod(0644, 0, 0, 0, 0644)
+        run_filestate_chmod(0644, 020, 0, 0, 0664)
+        run_filestate_chmod(0644, 0, 04, 0, 0640)
+        run_filestate_chmod(0644, 0, 0644, 0, 0)
+        run_filestate_chmod(0644, 0131, 0020, 0, 0755)
+        run_filestate_chmod(0644, 0131, 0020, 0777, 0644)
+        run_filestate_chmod(0755, 02020, 0, 0, 02775)
+        run_filestate_chmod(0755, 02775, 0, 0, 02775)

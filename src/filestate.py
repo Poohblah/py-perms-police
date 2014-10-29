@@ -23,9 +23,9 @@ class FileState():
             self.ignore_group = False
         else:
             self.ignore_group = ignore_group
-        self.add_perms    = 0
-        self.remove_perms = 0
-        self.ignore_perms = 0
+        self.add_perms    = add_perms
+        self.remove_perms = remove_perms
+        self.ignore_perms = ignore_perms
 
     def _setUidAndGid(self):
         if self.owner is not None and not self.ignore_owner:
@@ -41,7 +41,9 @@ class FileState():
         self._setUidAndGid()
         stat = os.stat(path)
         oldperms = stat.st_mode
-        newperms = oldperms | self.add_perms ^ self.remove_perms
+        newperms = ( oldperms \
+             | (self.add_perms ^ (self.ignore_perms & self.add_perms)) ) \
+             ^ ( self.remove_perms ^ (self.ignore_perms & self.remove_perms) )
         if ( self._uid != -1 or self._gid != -1 ) \
             and ( self._uid != stat.st_uid or self._gid != stat.st_gid ):
             os.chown(path, self._uid, self._gid)
