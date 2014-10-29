@@ -14,9 +14,15 @@ class FileState():
             ignore_perms=0
             ):
         self.owner        = owner
-        self.ignore_owner = ignore_owner
+        if owner is not None:
+            self.ignore_owner = False
+        else:
+            self.ignore_owner = ignore_owner
         self.group        = group
-        self.ignore_group = ignore_group
+        if group is not None:
+            self.ignore_group = False
+        else:
+            self.ignore_group = ignore_group
         self.add_perms    = 0
         self.remove_perms = 0
         self.ignore_perms = 0
@@ -36,8 +42,8 @@ class FileState():
         stat = os.stat(path)
         oldperms = stat.st_mode
         newperms = oldperms | self.add_perms ^ self.remove_perms
-        if self._uid != -1 and self._gid != -1 \
-            and self._uid != stat.st_uid and self._gid != stat.st_gid:
+        if ( self._uid != -1 or self._gid != -1 ) \
+            and ( self._uid != stat.st_uid or self._gid != stat.st_gid ):
             os.chown(path, self._uid, self._gid)
         if newperms != oldperms:
             os.chmod(path, newperms)
