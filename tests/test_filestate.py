@@ -69,7 +69,8 @@ class TestFileState(unittest.TestCase):
             if olduser != newuser or oldgroup != newgroup:
                 call_list.append(mock.call.os.chown(fn,
                     uid_map[newuser], gid_map[newgroup]))
-            self.assertEqual(mock_os.chown.mock_calls, call_list)
+            self.assertEqual(mock_os.chown.mock_calls, call_list,
+                "chown operation failed")
 
         # do not change user or group
         run_filestate_chown(user1, group1, user1, group1)
@@ -95,7 +96,8 @@ class TestFileState(unittest.TestCase):
             fs.achieveState(fn)
             if mode != expected_mode:
                 call_list.append(mock.call.os.chmod(fn, expected_mode))
-            self.assertEqual(mock_os.chmod.mock_calls, call_list)
+            self.assertEqual(mock_os.chmod.mock_calls, call_list,
+                "chmod operation failed")
 
         run_filestate_chmod(0644, 0, 0, 0, 0644)
         run_filestate_chmod(0644, 020, 0, 0, 0664)
