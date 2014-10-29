@@ -107,3 +107,4 @@ class TestFileState(unittest.TestCase):
         run_filestate_chmod(0644, 0131, 0020, 0777, 0644)
         run_filestate_chmod(0755, 02020, 0, 0, 02775)
         run_filestate_chmod(0755, 02775, 0, 0, 02775)
+        run_filestate_chmod(0755, 0, 0777, 0, 0)
