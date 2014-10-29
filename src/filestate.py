@@ -51,12 +51,12 @@ class FileState():
         if newperms != oldperms:
             os.chmod(path, newperms)
 
-    def mergeState(self, state):
-        if state.owner: self.owner = state.owner
-        self.ignore_owner = state.ignore_owner
-        if state.group: self.group = state.group
-        self.ignore_group = state.ignore_group
-        self.add_perms = self.add_perms | state.add_perms ^ state.ignore_perms
-        self.remove_perms = self.remove_perms | state.remove_perms \
-            ^ state.ignore_perms
-        self.ignore_perms = state.ignore_perms
+    # def mergeState(self, state):
+    #     if state.owner: self.owner = state.owner
+    #     self.ignore_owner = state.ignore_owner
+    #     if state.group: self.group = state.group
+    #     self.ignore_group = state.ignore_group
+    #     self.add_perms = self.add_perms | state.add_perms ^ state.ignore_perms
+    #     self.remove_perms = self.remove_perms | state.remove_perms \
+    #         ^ state.ignore_perms
+    #     self.ignore_perms = state.ignore_perms
