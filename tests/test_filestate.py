@@ -5,6 +5,9 @@ import random
 import string
 import os
 
+@mock.patch('src.filestate.os', spec=True)
+@mock.patch('src.filestate.pwd', spec=True)
+@mock.patch('src.filestate.grp', spec=True)
 class TestFileState(unittest.TestCase):
 
     def setUp(self):
@@ -13,8 +16,7 @@ class TestFileState(unittest.TestCase):
     def tearDown(self):
         pass
 
-    @mock.patch('src.filestate.os')
-    def testEmptyFileState(self, mock_os):
+    def testEmptyFileState(self, mock_grp, mock_pwd, mock_os):
         # The permissions should stay the same after calling achieveState()
         # on an empty FileState object.
 
