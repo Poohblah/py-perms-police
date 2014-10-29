@@ -1,40 +1,31 @@
 import unittest
+import mock
 import src.filestate
+import random
+import string
 import os
-from pyfakefs import fake_filesystem_unittest
 
-class TestFileState(fake_filesystem_unittest.TestCase):
-
-    def getFileStat(self, path):
-        stat  = os.lstat(path)
-        owner = stat.st_uid
-        group = stat.st_gid
-        perms = stat.st_mode
-        return {'owner': owner,
-                'group': group,
-                'perms': perms}
-
-    def createEmptyFile(self, path):
-        basedir = os.path.dirname(path)
-        if not os.path.exists(basedir):
-            os.makedirs(basedir)
-        open(path, 'a').close()
+class TestFileState(unittest.TestCase):
 
     def setUp(self):
-        self.setUpPyfakefs()
+        pass
 
     def tearDown(self):
-        self.tearDownPyfakefs()
+        pass
 
-    def testEmptyFileState(self):
-        """
-        The permissions should stay the same after calling achieveState()
-        on an empty FileState object.
-        """
-        tmpf = '/tmp/foo'
-        self.createEmptyFile(tmpf)
-        oldstat = self.getFileStat(tmpf)
+    @mock.patch('src.filestate.os')
+    def testEmptyFileState(self, mock_os):
+        # The permissions should stay the same after calling achieveState()
+        # on an empty FileState object.
+
+        fn = "foobar"
+        stat = mock_os.stat.return_value
+        stat.st_mode = 0644
+
         fs = src.filestate.FileState()
-        fs.achieveState(tmpf)
-        newstat = self.getFileStat(tmpf)
-        self.assertEquals(oldstat, newstat)
+        fs.achieveState(fn)
+
+        self.assertFalse(mock_os.chown.called,
+            "chown called though file mode will not change")
+        self.assertFalse(mock_os.chmod.called,
+            "chmod called though file mode will not change")
