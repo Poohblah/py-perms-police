@@ -13,7 +13,7 @@ class TestMatches(unittest.TestCase):
 
         def run_matches(path, pattern, expected_result):
             actual_result = src.patternmatcher.matches(path, pattern)
-            msg = """pattermatcher.matches did not return expected result:
+            msg = """patternmatcher.matches did not return expected result:
 path: %s
 pattern: %s
 expected result: %s
